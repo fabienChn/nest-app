@@ -4,10 +4,14 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { Prisma } from '@prisma/client';
 import * as argon from 'argon2';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../../src/prisma/prisma.service';
 import { AuthDto } from './dto';
+
+export interface AccessTokenObject {
+  access_token: string;
+}
 
 @Injectable()
 export class AuthService {
@@ -17,7 +21,7 @@ export class AuthService {
     private config: ConfigService,
   ) {}
 
-  async signup(dto: AuthDto): Promise<string> {
+  async signup(dto: AuthDto): Promise<AccessTokenObject> {
     const hash = await argon.hash(dto.password);
 
     try {
@@ -30,7 +34,9 @@ export class AuthService {
 
       return this.signToken(user.id, user.email);
     } catch (e) {
-      if (e instanceof PrismaClientKnownRequestError) {
+      if (
+        e instanceof Prisma.PrismaClientKnownRequestError
+      ) {
         if (e.code === 'P2002') {
           throw new ForbiddenException(
             'Email already exists',
@@ -41,7 +47,7 @@ export class AuthService {
     }
   }
 
-  async signin(dto: AuthDto): Promise<string> {
+  async signin(dto: AuthDto): Promise<AccessTokenObject> {
     const user = await this.prisma.user.findUnique({
       where: {
         email: dto.email,
@@ -67,12 +73,16 @@ export class AuthService {
   async signToken(
     userId: number,
     email: string,
-  ): Promise<string> {
+  ): Promise<AccessTokenObject> {
     const payload = { sub: userId, email };
 
-    return this.jwt.signAsync(payload, {
+    const token = await this.jwt.signAsync(payload, {
       expiresIn: '60m',
       secret: this.config.get('JWT_SECRET'),
     });
+
+    return {
+      access_token: token,
+    };
   }
 }

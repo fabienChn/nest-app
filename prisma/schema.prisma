@@ -34,9 +34,9 @@ model Message {
   text String
   isLiked Boolean @default(false)
   emitterId Int
-  emitter User @relation(fields: [emitterId], references: [id], name: "Emitter")
+  emitter User @relation(fields: [emitterId], references: [id], name: "Emitter", onDelete: Cascade)
   receiverId Int
-  receiver User @relation(fields: [receiverId], references: [id], name: "Receiver")
+  receiver User @relation(fields: [receiverId], references: [id], name: "Receiver", onDelete: Cascade)
 
   @@map("messages")
 }
