@@ -15,10 +15,15 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  email String
+  email String @unique
   password String
 
   name String?
+
+  receivedMessages Message[] @relation("Receiver")
+  emittedMessages Message[] @relation("Emitter")
+
+  @@map("users")
 }
 
 model Message {
@@ -28,6 +33,10 @@ model Message {
 
   text String
   isLiked Boolean @default(false)
-  emitter 
-  receiver
+  emitterId Int
+  emitter User @relation(fields: [emitterId], references: [id], name: "Emitter")
+  receiverId Int
+  receiver User @relation(fields: [receiverId], references: [id], name: "Receiver")
+
+  @@map("messages")
 }
