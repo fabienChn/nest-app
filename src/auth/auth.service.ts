@@ -6,8 +6,8 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Prisma } from '@prisma/client';
 import * as argon from 'argon2';
-import { PrismaService } from '../../src/prisma/prisma.service';
-import { AuthDto } from './dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { SignupDto, SigninDto } from './auth.dto';
 
 export interface AccessTokenObject {
   access_token: string;
@@ -21,13 +21,14 @@ export class AuthService {
     private config: ConfigService,
   ) {}
 
-  async signup(dto: AuthDto): Promise<AccessTokenObject> {
+  async signup(dto: SignupDto): Promise<AccessTokenObject> {
     const hash = await argon.hash(dto.password);
 
     try {
       const user = await this.prisma.user.create({
         data: {
           email: dto.email,
+          name: dto.name,
           password: hash,
         },
       });
@@ -47,7 +48,7 @@ export class AuthService {
     }
   }
 
-  async signin(dto: AuthDto): Promise<AccessTokenObject> {
+  async signin(dto: SigninDto): Promise<AccessTokenObject> {
     const user = await this.prisma.user.findUnique({
       where: {
         email: dto.email,

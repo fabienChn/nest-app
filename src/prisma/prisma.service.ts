@@ -14,10 +14,29 @@ export class PrismaService extends PrismaClient {
     });
   }
 
+  private getAllModelNames = (): string[] => {
+    return Reflect.ownKeys(this).filter((key) => {
+      return (
+        typeof key === 'string' &&
+        !['_', '$'].includes(key[0]) &&
+        key === key.toLowerCase()
+      );
+    }) as string[];
+  };
+
   cleanDb() {
-    return this.$transaction([
-      this.message.deleteMany(),
-      this.user.deleteMany(),
-    ]);
+    if (process.env.NODE_ENV !== 'test') {
+      console.log(
+        'NODE_ENV should be "test" to clean the db',
+      );
+
+      return;
+    }
+
+    return Promise.all(
+      this.getAllModelNames().map((modelKey) =>
+        this[modelKey].deleteMany(),
+      ),
+    );
   }
 }
