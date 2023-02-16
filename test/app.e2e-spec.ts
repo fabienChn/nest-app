@@ -1,42 +1,26 @@
-import {
-  INestApplication,
-  ValidationPipe,
-} from '@nestjs/common';
-import { Test } from '@nestjs/testing';
-import * as pactum from 'pactum';
+import { INestApplication } from '@nestjs/common';
+import * as supertest from 'supertest';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AppModule } from 'src/app.module';
 import { SignupDto } from 'src/auth/auth.dto';
 import {
   Conversation,
   Message,
   User,
 } from '@prisma/client';
+import { initTestServer } from 'test/test-setup';
 
 describe('App e2e', () => {
   let app: INestApplication;
   let prisma: PrismaService;
   let user: User;
+  let accessToken: string;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleRef.createNestApplication();
-
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-      }),
-    );
-
+    app = await initTestServer();
     await app.init();
-    await app.listen(3001);
 
     prisma = app.get(PrismaService);
     await prisma.cleanDb();
-    pactum.request.setBaseUrl('http://localhost:3001');
   });
 
   afterAll(() => {
@@ -45,72 +29,68 @@ describe('App e2e', () => {
 
   describe('Auth', () => {
     const dto: SignupDto = {
-      email: 'email@gmail.com',
+      email: 'fabien@gmail.com',
       name: 'Fabien',
       password: '123',
     };
 
     describe('Signup', () => {
       it('Should throw exception if email is empty', () => {
-        return pactum
-          .spec()
+        return supertest(app.getHttpServer())
           .post('/auth/signup')
-          .withBody({
+          .send({
             password: dto.password,
           })
-          .expectStatus(400);
+          .expect(400);
       });
 
       it('Should throw exception if password is empty', () => {
-        return pactum
-          .spec()
+        return supertest(app.getHttpServer())
           .post('/auth/signup')
-          .withBody({
+          .send({
             email: dto.email,
           })
-          .expectStatus(400);
+          .expect(400);
       });
 
       it('Should signup', async () => {
-        return pactum
-          .spec()
+        return supertest(app.getHttpServer())
           .post('/auth/signup')
-          .withBody(dto)
-          .expectStatus(200);
+          .send(dto)
+          .expect(200);
       });
     });
 
     describe('Signin', () => {
       it('Should throw exception if email is empty', () => {
-        return pactum
-          .spec()
+        return supertest(app.getHttpServer())
           .post('/auth/signin')
-          .withBody({
+          .send({
             password: dto.password,
           })
-          .expectStatus(400);
+          .expect(400);
       });
 
       it('Should throw exception if password is empty', () => {
-        return pactum
-          .spec()
+        return supertest(app.getHttpServer())
           .post('/auth/signin')
-          .withBody({
+          .send({
             email: dto.email,
           })
-          .expectStatus(400);
+          .expect(400);
       });
 
       it('Should signin', () => {
-        return pactum
-          .spec()
+        return supertest(app.getHttpServer())
           .post('/auth/signin')
-          .withBody({
+          .send({
             email: dto.email,
             password: dto.password,
           })
-          .expectStatus(200)
-          .stores('userAccessToken', 'access_token');
+          .expect(200)
+          .then((res) => {
+            accessToken = res.body.access_token;
+          });
       });
     });
   });
@@ -118,16 +98,17 @@ describe('App e2e', () => {
   describe('User', () => {
     describe('Get me', () => {
       it('Should get me', () => {
-        return pactum
-          .spec()
+        return supertest(app.getHttpServer())
           .get('/users/me')
-          .withHeaders({
-            Authorization: 'Bearer $S{userAccessToken}',
-          })
-          .expectStatus(200)
-          .expectBodyContains('id')
-          .expectBodyContains('email')
-          .expectBodyContains('name');
+          .set('Authorization', `Bearer ${accessToken}`)
+          .expect(200)
+          .expect((response) => {
+            expect(response.body.id).not.toBe(undefined);
+            expect(response.body.email).toBe(
+              'fabien@gmail.com',
+            );
+            expect(response.body.name).toBe('Fabien');
+          });
       });
     });
   });
@@ -209,35 +190,31 @@ describe('App e2e', () => {
 
     describe('Get conversations', () => {
       it('Should get conversations', () => {
-        return pactum
-          .spec()
+        return supertest(app.getHttpServer())
           .get('/conversations')
-          .withHeaders({
-            Authorization: 'Bearer $S{userAccessToken}',
-          })
-          .expectStatus(200)
-          .expectBodyContains(conversations[0])
-          .expectBodyContains(conversations[1]);
+          .set('Authorization', `Bearer ${accessToken}`)
+          .expect(200)
+          .expect((res) => {
+            expect(res.body[0].id).toBe(
+              conversations[0].id,
+            );
+            expect(res.body[1].id).toBe(
+              conversations[1].id,
+            );
+          });
       });
     });
 
-    describe.skip('Get conversation', () => {
+    describe('Get conversation', () => {
       it('Should get a messages matching the given id', () => {
-        return pactum
-          .spec()
+        return supertest(app.getHttpServer())
           .get(`/conversations/${conversations[0].id}`)
-          .withHeaders({
-            Authorization: 'Bearer $S{userAccessToken}',
-          })
-          .expectStatus(200)
-          .expectBody([
-            {
-              id: messages[0].id,
-            },
-            {
-              id: messages[1].id,
-            },
-          ]);
+          .set('Authorization', `Bearer ${accessToken}`)
+          .expect(200)
+          .expect((res) => {
+            expect(res.body[0].id).toBe(messages[0].id);
+            expect(res.body[1].id).toBe(messages[1].id);
+          });
       });
     });
   });

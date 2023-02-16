@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
@@ -31,7 +32,7 @@ export class ConversationController {
   @HttpCode(HttpStatus.OK)
   @Get(':id')
   getConversation(
-    @Param('id') conversationId: number,
+    @Param('id', ParseIntPipe) conversationId: number,
     @GetUser('id') userId: number,
   ) {
     return this.conversationService.getConversation(
