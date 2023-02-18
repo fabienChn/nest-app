@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
@@ -16,11 +18,12 @@ import {
 import { MessageService } from './message.service';
 
 @UseGuards(JwtGuard)
-@Controller('message')
+@Controller('messages')
 export class MessageController {
   constructor(private messageService: MessageService) {}
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   createMessage(
     @GetUser('id') userId: number,
     @Body() dto: CreateMessageDto,
@@ -29,6 +32,7 @@ export class MessageController {
   }
 
   @Patch(':id')
+  @HttpCode(HttpStatus.OK)
   editMessage(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) messageId: number,
