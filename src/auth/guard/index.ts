@@ -1,1 +1,1 @@
-export * from './jwtGuard';
+export * from './jwt-guard';
