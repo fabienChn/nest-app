@@ -1,13 +1,6 @@
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import {
-  Message,
-  Conversation,
-  User,
-} from '@prisma/client';
+import { Conversation, User } from '@prisma/client';
 import { CreateConversationDto } from './conversation.dto';
 
 @Injectable()
@@ -21,7 +14,9 @@ export class ConversationService {
       where: {
         users: {
           some: {
-            id: userId,
+            user: {
+              id: userId,
+            },
           },
         },
       },
@@ -36,42 +31,31 @@ export class ConversationService {
     });
   }
 
-  async getConversation(
+  getConversation(
     conversationId: number,
     userId: number,
-  ): Promise<Message[]> {
-    const conversation =
-      await this.prisma.conversation.findFirst({
-        where: {
-          id: conversationId,
-          users: {
-            some: {
+  ): Promise<Conversation> {
+    return this.prisma.conversation.findFirst({
+      where: {
+        id: conversationId,
+        users: {
+          some: {
+            user: {
               id: userId,
             },
           },
         },
-      });
-
-    if (!conversation) {
-      throw new NotFoundException();
-    }
-
-    const messages = await this.prisma.message.findMany({
-      where: {
-        conversationId: conversationId,
       },
-      orderBy: {
-        createdAt: 'asc',
+      include: {
+        users: true,
       },
     });
-
-    return messages;
   }
 
   async createConversation(
     user: User,
     dto: CreateConversationDto,
-  ) {
+  ): Promise<Conversation> {
     const interlocutors = await this.prisma.user.findMany({
       where: {
         id: {
@@ -83,7 +67,15 @@ export class ConversationService {
     return this.prisma.conversation.create({
       data: {
         users: {
-          connect: [...interlocutors, user],
+          create: [...interlocutors, user].map(
+            (interlocutor) => ({
+              user: {
+                connect: {
+                  id: interlocutor.id,
+                },
+              },
+            }),
+          ),
         },
       },
     });

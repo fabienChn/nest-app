@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Message } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
   CreateMessageDto,
@@ -9,7 +10,33 @@ import {
 export class MessageService {
   constructor(private prisma: PrismaService) {}
 
-  createMessage(userId: number, dto: CreateMessageDto) {
+  getMessages(
+    conversationId: number,
+    userId: number,
+  ): Promise<Message[]> {
+    return this.prisma.message.findMany({
+      where: {
+        conversation: {
+          id: conversationId,
+          users: {
+            some: {
+              user: {
+                id: userId,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+    });
+  }
+
+  createMessage(
+    userId: number,
+    dto: CreateMessageDto,
+  ): Promise<Message> {
     return this.prisma.message.create({
       data: {
         userId,
@@ -23,7 +50,7 @@ export class MessageService {
     userId: number,
     messageId: number,
     dto: EditMessageDto,
-  ) {
+  ): Promise<Message> {
     return this.prisma.message.update({
       where: {
         id: messageId,

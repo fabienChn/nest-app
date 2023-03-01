@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Param,
@@ -21,6 +22,19 @@ import { MessageService } from './message.service';
 @Controller('messages')
 export class MessageController {
   constructor(private messageService: MessageService) {}
+
+  @Get(':conversationId')
+  @HttpCode(HttpStatus.OK)
+  getMessages(
+    @GetUser('id') userId: number,
+    @Param('conversationId', ParseIntPipe)
+    conversationId: number,
+  ) {
+    return this.messageService.getMessages(
+      conversationId,
+      userId,
+    );
+  }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)

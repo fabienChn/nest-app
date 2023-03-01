@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   ParseIntPipe,
+  Post,
   UseGuards,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
@@ -42,7 +43,7 @@ export class ConversationController {
   }
 
   @HttpCode(HttpStatus.CREATED)
-  @Get()
+  @Post()
   createConversation(
     @GetUser() user: User,
     @Body() dto: CreateConversationDto,

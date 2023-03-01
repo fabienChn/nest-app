@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "db:dev:seed": "yarn prisma db seed",
     "prisma:migrate": "prisma migrate dev",
     "prisma:dev:studio": "prisma studio",
     "prisma:dev:deploy": "prisma migrate deploy",
@@ -93,5 +94,8 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "prisma": {
+    "seed": "node --loader ts-node/esm prisma/seed.ts"
   }
 }
