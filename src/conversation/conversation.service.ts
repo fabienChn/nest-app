@@ -1,4 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Conversation, User } from '@prisma/client';
 import { CreateConversationDto } from './conversation.dto';
@@ -21,6 +24,11 @@ export class ConversationService {
         },
       },
       include: {
+        users: {
+          include: {
+            user: true,
+          },
+        },
         messages: {
           take: 1,
           orderBy: {
@@ -56,6 +64,57 @@ export class ConversationService {
     user: User,
     dto: CreateConversationDto,
   ): Promise<Conversation> {
+    const conversations =
+      await this.prisma.conversation.findMany({
+        where: {
+          AND: [
+            users: {
+              some: {
+                userId: user.id,
+              }
+            },
+            users: {
+              some: {
+                userId: dto.userIds[0]
+              }
+            }
+          ],
+          // users: {
+          //   // some: {
+          //   //   // AND: [
+          //   //   // {
+          //   //   userId: dto.userIds[0],
+          //   //   //   },
+          //   //   //   {
+          //   //   //     userId: user.id,
+          //   //   //   },
+          //   //   // ],
+          //   // },
+
+          //   AND: [
+          //     {
+          //       userId: user.id,
+          //     },
+          //     {
+          //       userId: dto.userIds[0],
+          //     },
+          //   ],
+          // },
+        },
+      });
+
+    console.log({
+      conversations,
+    });
+
+    if (conversations.length > 0) {
+      throw new ConflictException(
+        'Conversation already exists',
+      );
+    }
+
+    throw new ConflictException('WTF');
+
     const interlocutors = await this.prisma.user.findMany({
       where: {
         id: {
@@ -69,6 +128,7 @@ export class ConversationService {
         users: {
           create: [...interlocutors, user].map(
             (interlocutor) => ({
+              userId: interlocutor.id,
               user: {
                 connect: {
                   id: interlocutor.id,

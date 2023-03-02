@@ -45,4 +45,33 @@ describe('User', () => {
         });
     });
   });
+
+  describe('Users', () => {
+    it('Should get the list of users', () => {
+      prisma.user.createMany({
+        data: [
+          {
+            name: 'Jane',
+            email: 'jane@gmail.com',
+            password: 'd',
+          },
+          {
+            name: 'Doe',
+            email: 'doe@gmail.com',
+            password: 'd',
+          },
+        ],
+      });
+
+      return supertest(app.getHttpServer())
+        .get('/users/me')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200)
+        .then((response) => {
+          expect(response.body.id).toBe(user.id);
+          expect(response.body.email).toBe(user.email);
+          expect(response.body.name).toBe(user.name);
+        });
+    });
+  });
 });

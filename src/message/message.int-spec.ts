@@ -1,11 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import * as supertest from 'supertest';
 import { PrismaService } from 'src/prisma/prisma.service';
-import {
-  Conversation,
-  Message,
-  User,
-} from '@prisma/client';
+import { Conversation, User } from '@prisma/client';
 import { initTestServer } from 'test/test-setup';
 import { AuthService } from 'src/auth/auth.service';
 import { generateAuthenticatedUser } from 'test/generate-authenticated-user';
@@ -45,9 +41,21 @@ describe('Conversation', () => {
     conversation = await prisma.conversation.create({
       data: {
         users: {
-          connect: [
-            { id: user.id },
-            { id: interlocutor.id },
+          create: [
+            {
+              user: {
+                connect: {
+                  id: user.id,
+                },
+              },
+            },
+            {
+              user: {
+                connect: {
+                  id: interlocutor.id,
+                },
+              },
+            },
           ],
         },
       },
@@ -59,7 +67,7 @@ describe('Conversation', () => {
   });
 
   describe('Create Message', () => {
-    it('Should get create a message', () => {
+    it('Should create a message', () => {
       return supertest(app.getHttpServer())
         .post('/messages')
         .set('Authorization', `Bearer ${accessToken}`)

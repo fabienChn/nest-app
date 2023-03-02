@@ -56,9 +56,21 @@ describe('Conversation', () => {
       await prisma.conversation.create({
         data: {
           users: {
-            connect: [
-              { id: user.id },
-              { id: interlocutors[0].id },
+            create: [
+              {
+                user: {
+                  connect: {
+                    id: user.id,
+                  },
+                },
+              },
+              {
+                user: {
+                  connect: {
+                    id: interlocutors[0].id,
+                  },
+                },
+              },
             ],
           },
         },
@@ -66,9 +78,21 @@ describe('Conversation', () => {
       await prisma.conversation.create({
         data: {
           users: {
-            connect: [
-              { id: user.id },
-              { id: interlocutors[1].id },
+            create: [
+              {
+                user: {
+                  connect: {
+                    id: user.id,
+                  },
+                },
+              },
+              {
+                user: {
+                  connect: {
+                    id: interlocutors[1].id,
+                  },
+                },
+              },
             ],
           },
         },
