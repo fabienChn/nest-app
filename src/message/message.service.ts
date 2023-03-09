@@ -28,7 +28,7 @@ export class MessageService {
         },
       },
       orderBy: {
-        createdAt: 'asc',
+        created_at: 'asc',
       },
     });
   }
@@ -39,9 +39,9 @@ export class MessageService {
   ): Promise<Message> {
     return this.prisma.message.create({
       data: {
-        userId,
+        user_id: userId,
         text: dto.text,
-        conversationId: dto.conversationId,
+        conversation_id: dto.conversationId,
       },
     });
   }
@@ -56,9 +56,9 @@ export class MessageService {
         id: messageId,
       },
       data: {
-        userId,
+        user_id: userId,
         text: dto.text,
-        isLiked: dto.isLiked,
+        is_liked: dto.isLiked,
       },
     });
   }

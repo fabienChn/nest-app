@@ -32,7 +32,7 @@ export class ConversationService {
         messages: {
           take: 1,
           orderBy: {
-            createdAt: 'desc',
+            created_at: 'desc',
           },
         },
       },
@@ -64,56 +64,21 @@ export class ConversationService {
     user: User,
     dto: CreateConversationDto,
   ): Promise<Conversation> {
-    const conversations =
-      await this.prisma.conversation.findMany({
-        where: {
-          AND: [
-            users: {
-              some: {
-                userId: user.id,
-              }
-            },
-            users: {
-              some: {
-                userId: dto.userIds[0]
-              }
-            }
-          ],
-          // users: {
-          //   // some: {
-          //   //   // AND: [
-          //   //   // {
-          //   //   userId: dto.userIds[0],
-          //   //   //   },
-          //   //   //   {
-          //   //   //     userId: user.id,
-          //   //   //   },
-          //   //   // ],
-          //   // },
-
-          //   AND: [
-          //     {
-          //       userId: user.id,
-          //     },
-          //     {
-          //       userId: dto.userIds[0],
-          //     },
-          //   ],
-          // },
-        },
-      });
-
-    console.log({
-      conversations,
-    });
+    const conversations = await this.prisma.$queryRaw<
+      Conversation[]
+    >`
+        SELECT c.id
+        FROM conversations c
+        INNER JOIN users_in_conversations uca ON uca.user_id = ${user.id} AND uca.conversation_id = c.id
+        INNER JOIN users_in_conversations ucb ON ucb.user_id = ${dto.userIds[0]} AND ucb.conversation_id = c.id
+        GROUP BY c.id
+      `;
 
     if (conversations.length > 0) {
       throw new ConflictException(
         'Conversation already exists',
       );
     }
-
-    throw new ConflictException('WTF');
 
     const interlocutors = await this.prisma.user.findMany({
       where: {
@@ -128,7 +93,7 @@ export class ConversationService {
         users: {
           create: [...interlocutors, user].map(
             (interlocutor) => ({
-              userId: interlocutor.id,
+              user_id: interlocutor.id,
               user: {
                 connect: {
                   id: interlocutor.id,

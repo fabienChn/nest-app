@@ -22,4 +22,10 @@ export const userSeeds: Pick<
     password:
       '$argon2id$v=19$m=65536,t=3,p=4$MTnX09ULMgJy+ePmPkoLtA$fXiqiXZtGS0tTgLT3jqzW2ssciYK5aQbnLi5CfPRpUs',
   },
+  {
+    name: 'Jane',
+    email: 'jane@gmail.com',
+    password:
+      '$argon2id$v=19$m=65536,t=3,p=4$MTnX09ULMgJy+ePmPkoLtA$fXiqiXZtGS0tTgLT3jqzW2ssciYK5aQbnLi5CfPRpUs',
+  },
 ];

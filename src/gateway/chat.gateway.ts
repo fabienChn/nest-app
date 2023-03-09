@@ -43,9 +43,9 @@ export class ChatGateway implements OnModuleInit {
     const createdMessage = await this.prisma.message.create(
       {
         data: {
-          userId: user.id,
+          user_id: user.id,
           text: message.text,
-          conversationId: message.conversationId,
+          conversation_id: message.conversation_id,
         },
       },
     );
