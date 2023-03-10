@@ -55,7 +55,11 @@ export class ConversationService {
         },
       },
       include: {
-        users: true,
+        users: {
+          include: {
+            user: true,
+          },
+        },
       },
     });
   }

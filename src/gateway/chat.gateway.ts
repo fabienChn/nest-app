@@ -9,9 +9,10 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Message, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import { Server } from 'socket.io';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateMessageDto } from 'src/message/message.dto';
 import { GetUser } from './decorator';
 import { WsJwtGuard } from './guard';
 
@@ -37,21 +38,27 @@ export class ChatGateway implements OnModuleInit {
 
   @SubscribeMessage('message')
   async handleMessage(
-    @GetUser() user: User,
-    @MessageBody() message: Partial<Message>,
+    @GetUser('id') userId: number,
+    @MessageBody() message: CreateMessageDto,
   ): Promise<void> {
     const createdMessage = await this.prisma.message.create(
       {
         data: {
-          user_id: user.id,
           text: message.text,
-          conversation_id: message.conversation_id,
+          user: {
+            connect: {
+              id: userId,
+            },
+          },
+          conversation: {
+            connect: {
+              id: Number(message.conversationId),
+            },
+          },
         },
       },
     );
 
-    this.server.emit('message', {
-      message: createdMessage,
-    });
+    this.server.emit('message', createdMessage);
   }
 }

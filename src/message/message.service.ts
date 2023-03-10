@@ -39,9 +39,17 @@ export class MessageService {
   ): Promise<Message> {
     return this.prisma.message.create({
       data: {
-        user_id: userId,
         text: dto.text,
-        conversation_id: dto.conversationId,
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
+        conversation: {
+          connect: {
+            id: Number(dto.conversationId),
+          },
+        },
       },
     });
   }
