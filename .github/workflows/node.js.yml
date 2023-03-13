@@ -16,10 +16,12 @@ jobs:
 
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_URL2: ${{ env.DATABASE_URL }}
 
     steps:
     - uses: actions/checkout@v3
-    - run: env.DATABASE_URL
+    - name: Show env var
+    - run: ${{ env.DATABASE_URL }}
     - name: Use Node.js 16.x
       uses: actions/setup-node@v3
       with:
