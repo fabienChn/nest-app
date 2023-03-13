@@ -16,7 +16,6 @@ jobs:
 
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      DATABASE_URL2: ${{ env.DATABASE_URL }}
 
     steps:
     - uses: actions/checkout@v3
