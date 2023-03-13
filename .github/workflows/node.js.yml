@@ -23,5 +23,5 @@ jobs:
         cache: 'yarn'
     - run: yarn install
     - run: yarn lint
-#    - run: yarn prisma:test:migrate
-#    - run: yarn test:int
+    - run: yarn prisma:test:migrate
+    - run: yarn test:int

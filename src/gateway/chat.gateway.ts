@@ -9,7 +9,6 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { User } from '@prisma/client';
 import { Server } from 'socket.io';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateMessageDto } from 'src/message/message.dto';
