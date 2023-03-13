@@ -26,8 +26,9 @@ jobs:
     - run: yarn prisma:test:migrate
     - name: Run integration tests
       run: yarn test:int
-      env:
-        DATABASE_URL: ${{ DATABASE_URL }}
-        JWT_SECRET: ${{ JWT_SECRET }}
+      # env:
+      #   DATABASE_URL: ${{ DATABASE_URL }}
+      #   JWT_SECRET: ${{ JWT_SECRET }}
+    - run: ${{ secrets.DATABASE_URL }}
     - run: ${{ DATABASE_URL }}
     - run: env
