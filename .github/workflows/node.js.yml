@@ -21,6 +21,7 @@ jobs:
       with:
         node-version: 16.x
         cache: 'yarn'
+    - run: ${{ secrets.DATABASE_URL }}
     - run: yarn install
     - run: yarn lint
     - run: yarn db:test:up && sleep 1 && yarn prisma:test:migrate && sleep 1 && yarn prisma:test:deploy
