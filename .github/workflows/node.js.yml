@@ -14,12 +14,13 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      DATABASE_URL: postgresql://postgres:123@localhost:5434/nest?schema=public
+      JWT_SECRET: super-secret
+
     steps:
     - uses: actions/checkout@v3
     - name: Show env var
-      env:
-        DATABASE_URL: postgresql://postgres:123@localhost:5434/nest?schema=public
-        JWT_SECRET: super-secret
       run: ${{ env.DATABASE_URL }}
     - name: Use Node.js 16.x
       uses: actions/setup-node@v3
