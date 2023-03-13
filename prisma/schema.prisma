@@ -53,9 +53,9 @@ model Conversation {
 }
 
 model UsersInConversations {
-  user User @relation(fields: [user_id], references: [id])
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id Int
-  conversation Conversation @relation(fields: [conversation_id], references: [id])
+  conversation Conversation @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
   conversation_id Int
 
   @@id([user_id, conversation_id])

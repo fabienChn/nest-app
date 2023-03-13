@@ -78,7 +78,7 @@ describe('Conversation', () => {
         .expect(201)
         .then((res) => {
           expect(res.body.text).toBe('my text');
-          expect(res.body.conversationId).toBe(
+          expect(res.body.conversation_id).toBe(
             conversation.id,
           );
         });
@@ -90,8 +90,8 @@ describe('Conversation', () => {
       const message = await prisma.message.create({
         data: {
           text: '1st version of the message',
-          userId: user.id,
-          conversationId: conversation.id,
+          user_id: user.id,
+          conversation_id: conversation.id,
         },
       });
 
@@ -108,7 +108,78 @@ describe('Conversation', () => {
         .then((res) => {
           expect(res.body.id).toBe(message.id);
           expect(res.body.text).toBe(dto.text);
-          expect(res.body.isLiked).toBe(dto.isLiked);
+          expect(res.body.is_liked).toBe(dto.isLiked);
+        });
+    });
+  });
+
+  describe('List messages', () => {
+    let messages;
+
+    beforeAll(async () => {
+      await prisma.message.deleteMany();
+
+      messages = [
+        await prisma.message.create({
+          data: {
+            text: 'Hello',
+            user_id: user?.id,
+            conversation_id: conversation.id,
+          },
+        }),
+        await prisma.message.create({
+          data: {
+            text: 'Hey how are you?',
+            user_id: interlocutor.id,
+            conversation_id: conversation.id,
+          },
+        }),
+        await prisma.message.create({
+          data: {
+            text: 'Hey Mom!',
+            user: {
+              connect: {
+                id: user?.id,
+              },
+            },
+            conversation: {
+              create: {
+                users: {
+                  create: [
+                    {
+                      user: {
+                        connect: {
+                          id: user?.id,
+                        },
+                      },
+                    },
+                    {
+                      user: {
+                        create: {
+                          name: 'joe',
+                          email: 'joe@gmail.com',
+                          password: '1',
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        }),
+      ];
+    });
+
+    it('returns a list of the messages from the conversation matching the given id', () => {
+      return supertest(app.getHttpServer())
+        .get(`/messages/${conversation.id}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200)
+        .then((res) => {
+          expect(res.body.length).toBe(2);
+          expect(res.body[0].id).toBe(messages[0].id);
+          expect(res.body[1].id).toBe(messages[1].id);
         });
     });
   });

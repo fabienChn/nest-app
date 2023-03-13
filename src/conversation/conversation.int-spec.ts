@@ -1,11 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import * as supertest from 'supertest';
 import { PrismaService } from 'src/prisma/prisma.service';
-import {
-  Conversation,
-  Message,
-  User,
-} from '@prisma/client';
+import { Conversation, User } from '@prisma/client';
 import { initTestServer } from 'test/test-setup';
 import { AuthService } from 'src/auth/auth.service';
 import { generateAuthenticatedUser } from 'test/generate-authenticated-user';
@@ -18,7 +14,6 @@ describe('Conversation', () => {
 
   let interlocutors: User[];
   let conversations: Conversation[];
-  let messages: Message[];
 
   beforeAll(async () => {
     app = await initTestServer();
@@ -98,30 +93,6 @@ describe('Conversation', () => {
         },
       }),
     ];
-
-    messages = [
-      await prisma.message.create({
-        data: {
-          text: 'Hello',
-          userId: user?.id,
-          conversationId: conversations[0].id,
-        },
-      }),
-      await prisma.message.create({
-        data: {
-          text: 'Hey how are you?',
-          userId: interlocutors[0].id,
-          conversationId: conversations[0].id,
-        },
-      }),
-      await prisma.message.create({
-        data: {
-          text: 'Hey Mom!',
-          userId: user?.id,
-          conversationId: conversations[1].id,
-        },
-      }),
-    ];
   });
 
   afterAll(() => {
@@ -135,23 +106,23 @@ describe('Conversation', () => {
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200)
         .then((res) => {
-          // TODO to fix order
+          expect(res.body.length).toBe(2);
+          // @TODO: fix order
           // expect(res.body[0].id).toBe(conversations[0].id);
           // expect(res.body[1].id).toBe(conversations[1].id);
-          expect(res.body.length).toBe(2);
         });
     });
   });
 
   describe('Get conversation', () => {
-    it('Should get all messages matching the given id', () => {
+    it('Should get the conversation matching the given id', () => {
       return supertest(app.getHttpServer())
         .get(`/conversations/${conversations[0].id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200)
         .then((res) => {
-          expect(res.body[0].id).toBe(messages[0].id);
-          expect(res.body[1].id).toBe(messages[1].id);
+          expect(res.body.id).toBe(conversations[0].id);
+          expect(res.body.users[0].user.name).toBe('elisa');
         });
     });
   });

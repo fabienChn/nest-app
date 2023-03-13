@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import * as supertest from 'supertest';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { initTestServer } from 'test/test-setup';
 import { AuthService } from 'src/auth/auth.service';
 import { generateAuthenticatedUser } from 'test/generate-authenticated-user';
