@@ -122,7 +122,9 @@ describe('Conversation', () => {
         .expect(200)
         .then((res) => {
           expect(res.body.id).toBe(conversations[0].id);
-          expect(res.body.users[0].user.name).toBe('elisa');
+          expect(res.body.users[0].user.name).toBe(
+            'Fabien',
+          );
         });
     });
   });
