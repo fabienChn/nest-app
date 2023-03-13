@@ -23,7 +23,7 @@ jobs:
         cache: 'yarn'
     - run: yarn install
     - run: yarn lint
-    - run: yarn prisma:test:migrate
+    - run: yarn db:test:up && sleep 1 && yarn prisma:test:migrate && sleep 1 && yarn prisma:test:deploy
     - name: Run integration tests
       run: yarn test:int
       # env:
