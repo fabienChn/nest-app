@@ -24,4 +24,10 @@ jobs:
     - run: yarn install
     - run: yarn lint
     - run: yarn prisma:test:migrate
-    - run: yarn test:int
+    - name: Run integration tests
+      run: yarn test:int
+      env:
+        DATABASE_URL: ${{ DATABASE_URL }}
+        JWT_SECRET: ${{ JWT_SECRET }}
+    - run: ${{ DATABASE_URL }}
+    - run: env
