@@ -16,19 +16,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - run: '${{ secrets.DATABASE_URL }}'
     - name: Use Node.js 16.x
       uses: actions/setup-node@v3
       with:
         node-version: 16.x
         cache: 'yarn'
-    - run: ${{ secrets.DATABASE_URL }}
-    - run: yarn install
-    - run: yarn lint
-    - run: yarn db:test:up && sleep 1 && yarn prisma:test:migrate && sleep 1 && yarn prisma:test:deploy
+    # - run: yarn install
+    # - run: yarn lint
+    # - run: yarn db:test:up && sleep 1 && yarn prisma:test:migrate && sleep 1 && yarn prisma:test:deploy
     # - name: Run integration tests
     #   run: yarn test:int
       # env:
       #   DATABASE_URL: ${{ DATABASE_URL }}
       #   JWT_SECRET: ${{ JWT_SECRET }}
-    - run: ${{ secrets.DATABASE_URL }}
-    - run: env
+    # - run: ${{ secrets.DATABASE_URL }}
+    # - run: env
