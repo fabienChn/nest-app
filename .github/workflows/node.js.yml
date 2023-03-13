@@ -30,6 +30,3 @@ jobs:
     - run: yarn db:test:up && sleep 1 && yarn prisma:test:migrate && sleep 1 && yarn prisma:test:deploy
     - name: Run integration tests
       run: yarn test:int
-      env:
-        DATABASE_URL: ${{ DATABASE_URL }}
-        JWT_SECRET: ${{ JWT_SECRET }}
