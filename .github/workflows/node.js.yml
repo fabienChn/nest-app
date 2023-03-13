@@ -30,5 +30,4 @@ jobs:
       #   DATABASE_URL: ${{ DATABASE_URL }}
       #   JWT_SECRET: ${{ JWT_SECRET }}
     - run: ${{ secrets.DATABASE_URL }}
-    - run: ${{ DATABASE_URL }}
     - run: env
