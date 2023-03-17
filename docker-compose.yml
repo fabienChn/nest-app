@@ -1,5 +1,23 @@
 version: '3.8'
 services:
+  main:
+      container_name: main
+      build:
+        context: .
+        target: development
+      volumes:
+        - .:/usr/src/app
+        - /usr/src/app/node_modules
+      ports:
+        - ${SERVER_PORT}:${SERVER_PORT}
+        - 9229:9229
+      command: yarn run start:dev
+      env_file:
+        - .env
+      networks:
+        - webnet
+      depends_on:
+        - dev-db
   dev-db:
     image: postgres:13
     ports:

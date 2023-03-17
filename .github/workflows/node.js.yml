@@ -13,10 +13,10 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    # env:
+    #   DATABASE_URL: postgresql://postgres:123@localhost:5434/nest?schema=public
+    #   JWT_SECRET: super-secret
 
-    env:
-      DATABASE_URL: postgresql://postgres:123@localhost:5434/nest?schema=public
-      JWT_SECRET: super-secret
 
     steps:
     - uses: actions/checkout@v3
@@ -25,7 +25,7 @@ jobs:
       with:
         node-version: 16.x
         cache: 'yarn'
-    - run: yarn install
+    - run: yarn ci
     - run: yarn lint
     - run: yarn db:test:up && sleep 1 && yarn prisma:test:migrate && sleep 1 && yarn prisma:test:deploy
     - name: Run integration tests
