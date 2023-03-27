@@ -16,10 +16,13 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(4000, (error?: Error) => {
-    if (error) {
-      console.log('MAIN.TS ERROR', error);
-    }
-  });
+  await app.listen(
+    process.env.SERVER_PORT,
+    (error?: Error) => {
+      if (error) {
+        console.log('MAIN.TS ERROR', error);
+      }
+    },
+  );
 }
 bootstrap();

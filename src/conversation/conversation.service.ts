@@ -23,16 +23,33 @@ export class ConversationService {
           },
         },
       },
-      include: {
-        users: {
-          include: {
-            user: true,
-          },
-        },
+      select: {
+        id: true,
+        created_at: true,
+        updated_at: true,
         messages: {
           take: 1,
           orderBy: {
             created_at: 'desc',
+          },
+          select: {
+            id: true,
+            text: true,
+          },
+        },
+        users: {
+          select: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+          where: {
+            NOT: {
+              user_id: userId,
+            },
           },
         },
       },
@@ -97,7 +114,6 @@ export class ConversationService {
         users: {
           create: [...interlocutors, user].map(
             (interlocutor) => ({
-              user_id: interlocutor.id,
               user: {
                 connect: {
                   id: interlocutor.id,

@@ -22,7 +22,6 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "prestart:dev": "yarn db:dev:up",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
@@ -32,7 +31,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "pretest:int": "yarn db:test:restart",
-    "test:int": "dotenv -e .env.test -- jest --runInBand --watch --no-cache --config ./jest-int.json"
+    "test:int": "dotenv -e .env.test -- jest --runInBand --watch --no-cache --config ./jest-int.json",
+    "start:dev:dc": "yarn prisma:migrate && yarn db:dev:seed && yarn start:dev",
+    "test-up": "docker-compose --env-file .env.test up --build -V test-nest-api"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
