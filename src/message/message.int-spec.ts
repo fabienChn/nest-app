@@ -34,7 +34,7 @@ describe('Conversation', () => {
       data: {
         email: 'elisa@gmail.com',
         password: '123',
-        name: 'elisa',
+        name: 'Elisa',
       },
     });
 

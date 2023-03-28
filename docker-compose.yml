@@ -2,7 +2,7 @@ version: '3.8'
 # volumes:
 #   db-vol:
 services:
-  dev-nest-api:
+  dev-api:
     build:
       context: .
       target: development
@@ -18,22 +18,22 @@ services:
       - dev-app
     depends_on:
       - dev-db
-  test-nest-api:
-    build:
-      context: .
-      target: development
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-    ports:
-      - ${SERVER_PORT}:${SERVER_PORT}
-    command: yarn run start:dev:dc
-    env_file:
-      - .env.test
-    networks:
-      - test-app
-    depends_on:
-      - test-db
+  # test-api:
+  #   build:
+  #     context: .
+  #     target: development
+  #   volumes:
+  #     - .:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   ports:
+  #     - ${SERVER_PORT}:${SERVER_PORT}
+  #   command: yarn run start:dev:dc
+  #   env_file:
+  #     - .env.test
+  #   networks:
+  #     - test-app
+  #   depends_on:
+  #     - test-db
   dev-db:
     image: postgres:13
     ports:
@@ -47,16 +47,16 @@ services:
     # @TODO: fix this: when using a volume, we should only seed once
     # volumes:
     #   - db-vol:/var/lib/postgresql/data 
-  test-db:
-    image: postgres:13
-    ports:
-      - 5435:5432
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123
-      POSTGRES_DB: nest
-    networks:
-      - test-app
+  # test-db:
+  #   image: postgres:13
+  #   ports:
+  #     - 5435:5432
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: 123
+  #     POSTGRES_DB: nest
+  #   networks:
+  #     - test-app
 networks:
   dev-app:
-  test-app:
+  # test-app:
