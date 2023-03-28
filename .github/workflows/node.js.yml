@@ -22,7 +22,7 @@ jobs:
         node-version: 16.x
         cache: 'yarn'
     - run: yarn ci
-    - run: yarn lint
-    - run: yarn db:test:up && sleep 1 && yarn prisma:test:migrate && sleep 1 && yarn prisma:test:deploy
+    - name: Linting
+      run: yarn lint
     - name: Run integration tests
-      run: yarn test:int
+      run: yarn dockerized:test:int
