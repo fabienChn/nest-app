@@ -21,7 +21,7 @@ jobs:
       with:
         node-version: 16.x
         cache: 'yarn'
-    - run: yarn ci
+    - run: yarn install --frozen-lockfile
     - name: Linting
       run: yarn lint
     - name: Run integration tests
