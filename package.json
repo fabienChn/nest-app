@@ -27,12 +27,13 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "pretest:int": "yarn prisma:test:deploy",
+    "pretest:int:watch": "yarn prisma:test:deploy",
     "test:int:watch": "dotenv -e .env.test -- jest --runInBand --watchAll --no-cache --config ./jest-int.json",
+    "pretest:int": "yarn prisma:test:deploy",
     "test:int": "dotenv -e .env.test -- jest --runInBand --no-cache --config ./jest-int.json",
     "start:dev:dc": "yarn prisma:migrate && yarn db:dev:seed && yarn start:dev",
-    "dockerized:test:int:watch": "docker-compose --env-file .env.test -f docker-compose.test.yml run --rm test-api yarn test:int:watch",
-    "dockerized:test:int": "docker-compose --env-file .env.test -f docker-compose.test.yml run --rm test-api yarn test:int"
+    "dockerized:test:int:watch": "docker-compose -f docker-compose.test.yml run --rm test-api yarn test:int:watch",
+    "dockerized:test:int": "docker-compose -f docker-compose.test.yml run --rm test-api yarn test:int"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
