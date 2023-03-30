@@ -7,8 +7,8 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-    ports:
-      - ${SERVER_PORT}:${SERVER_PORT}
+    # ports:
+    #   - ${SERVER_PORT}:${SERVER_PORT}
     env_file:
       - .env.test
     networks:
@@ -17,8 +17,6 @@ services:
       - test-db
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    # links:
-    #   - test-db
   test-db:
     image: postgres:13
     ports:
