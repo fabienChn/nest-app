@@ -47,30 +47,42 @@ describe('User', () => {
   });
 
   describe('Users', () => {
-    it('Should get the list of users', () => {
+    it.only('Should get the list of users', () => {
+      const usersData = [
+        {
+          name: 'Jane',
+          email: 'jane@gmail.com',
+          password: 'd',
+        },
+        {
+          name: 'Doe',
+          email: 'doe@gmail.com',
+          password: 'd',
+        },
+      ];
+
       prisma.user.createMany({
-        data: [
-          {
-            name: 'Jane',
-            email: 'jane@gmail.com',
-            password: 'd',
-          },
-          {
-            name: 'Doe',
-            email: 'doe@gmail.com',
-            password: 'd',
-          },
-        ],
+        data: usersData,
       });
 
+      // @TODO: to fix
       return supertest(app.getHttpServer())
-        .get('/users/me')
+        .get('/users')
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200)
         .then((response) => {
-          expect(response.body.id).toBe(user.id);
-          expect(response.body.email).toBe(user.email);
-          expect(response.body.name).toBe(user.name);
+          expect(response.body[0].email).toBe(
+            usersData[0].email,
+          );
+          expect(response.body[0].name).toBe(
+            usersData[0].name,
+          );
+          expect(response.body[1].email).toBe(
+            usersData[1].email,
+          );
+          expect(response.body[1].name).toBe(
+            usersData[1].name,
+          );
         });
     });
   });

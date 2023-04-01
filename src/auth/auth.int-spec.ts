@@ -27,22 +27,24 @@ describe('Auth', () => {
   };
 
   describe('Signup', () => {
-    it('Should throw exception if email is empty', () => {
-      return supertest(app.getHttpServer())
-        .post('/auth/signup')
-        .send({
-          password: dto.password,
-        })
-        .expect(400);
-    });
+    describe('Incomplete credentials', () => {
+      it('Should throw exception if email is empty', () => {
+        return supertest(app.getHttpServer())
+          .post('/auth/signup')
+          .send({
+            password: dto.password,
+          })
+          .expect(400);
+      });
 
-    it('Should throw exception if password is empty', () => {
-      return supertest(app.getHttpServer())
-        .post('/auth/signup')
-        .send({
-          email: dto.email,
-        })
-        .expect(400);
+      it('Should throw exception if password is empty', () => {
+        return supertest(app.getHttpServer())
+          .post('/auth/signup')
+          .send({
+            email: dto.email,
+          })
+          .expect(400);
+      });
     });
 
     it('Should signup', async () => {
@@ -51,25 +53,56 @@ describe('Auth', () => {
         .send(dto)
         .expect(200);
     });
+
+    it('Should throw exception if email already exists', () => {
+      return supertest(app.getHttpServer())
+        .post('/auth/signup')
+        .send(dto)
+        .expect(403);
+    });
   });
 
   describe('Signin', () => {
-    it('Should throw exception if email is empty', () => {
-      return supertest(app.getHttpServer())
-        .post('/auth/signin')
-        .send({
-          password: dto.password,
-        })
-        .expect(400);
+    describe('Incomplete credentials', () => {
+      it('Should throw exception if email is empty', () => {
+        return supertest(app.getHttpServer())
+          .post('/auth/signin')
+          .send({
+            password: dto.password,
+          })
+          .expect(400);
+      });
+
+      it('Should throw exception if password is empty', () => {
+        return supertest(app.getHttpServer())
+          .post('/auth/signin')
+          .send({
+            email: dto.email,
+          })
+          .expect(400);
+      });
     });
 
-    it('Should throw exception if password is empty', () => {
-      return supertest(app.getHttpServer())
-        .post('/auth/signin')
-        .send({
-          email: dto.email,
-        })
-        .expect(400);
+    describe('Wrong credentials', () => {
+      it('Should throw exception if email is wrong', () => {
+        return supertest(app.getHttpServer())
+          .post('/auth/signin')
+          .send({
+            email: 'wrong@email.de',
+            password: dto.password,
+          })
+          .expect(403);
+      });
+
+      it('Should throw exception if password is wrong', () => {
+        return supertest(app.getHttpServer())
+          .post('/auth/signin')
+          .send({
+            email: dto.email,
+            password: 'wrong password',
+          })
+          .expect(403);
+      });
     });
 
     it('Should signin', () => {

@@ -45,6 +45,13 @@ describe('Conversation', () => {
           name: 'Steffi',
         },
       }),
+      await prisma.user.create({
+        data: {
+          email: 'jane@gmail.com',
+          password: '123',
+          name: 'Jane',
+        },
+      }),
     ];
 
     conversations = [
@@ -123,6 +130,34 @@ describe('Conversation', () => {
         .then((res) => {
           expect(res.body.id).toBe(conversations[0].id);
           expect(res.body.users[0].user.name).toBe('Elisa');
+        });
+    });
+  });
+
+  describe('Create conversation', () => {
+    describe('When the conversation already exists', () => {
+      it('Should throw a Conflict Exception', () => {
+        return supertest(app.getHttpServer())
+          .post('/conversations')
+          .set('Authorization', `Bearer ${accessToken}`)
+          .send({
+            userIds: [interlocutors[0].id],
+          })
+          .expect(409);
+      });
+    });
+
+    it('Should create a conversation', () => {
+      return supertest(app.getHttpServer())
+        .post('/conversations')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          userIds: [interlocutors[2].id],
+        })
+        .expect(201)
+        .then((res) => {
+          expect(res.body.id).toBe(conversations[1].id + 1);
+          expect(res.body.users[1].user.name).toBe('Jane');
         });
     });
   });

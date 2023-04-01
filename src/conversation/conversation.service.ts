@@ -71,10 +71,23 @@ export class ConversationService {
           },
         },
       },
-      include: {
+      select: {
+        id: true,
+        created_at: true,
+        updated_at: true,
         users: {
-          include: {
-            user: true,
+          select: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+          where: {
+            NOT: {
+              user_id: userId,
+            },
           },
         },
       },
@@ -121,6 +134,13 @@ export class ConversationService {
               },
             }),
           ),
+        },
+      },
+      include: {
+        users: {
+          include: {
+            user: true,
+          },
         },
       },
     });
