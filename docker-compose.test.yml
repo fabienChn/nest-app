@@ -7,10 +7,9 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-    # ports:
-    #   - ${SERVER_PORT}:${SERVER_PORT}
     env_file:
       - .env.test
+    # command: yarn run prisma:test:deploy
     networks:
       - test-app
     depends_on:
