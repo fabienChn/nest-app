@@ -47,7 +47,7 @@ describe('User', () => {
   });
 
   describe('Users', () => {
-    it.only('Should get the list of users', () => {
+    it('Should get the list of users', async () => {
       const usersData = [
         {
           name: 'Jane',
@@ -61,11 +61,10 @@ describe('User', () => {
         },
       ];
 
-      prisma.user.createMany({
+      await prisma.user.createMany({
         data: usersData,
       });
 
-      // @TODO: to fix
       return supertest(app.getHttpServer())
         .get('/users')
         .set('Authorization', `Bearer ${accessToken}`)

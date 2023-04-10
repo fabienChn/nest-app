@@ -27,10 +27,10 @@
     "start:dev:dc": "yarn prisma:migrate && yarn db:dev:seed && yarn start:dev",
     "pretest:int": "yarn prisma:test:deploy",
     "test:int": "dotenv -e .env.test -- jest --runInBand --no-cache --config ./jest-int.json",
-    "dockerized:test-api": "docker-compose -f docker-compose.test.yml run --rm test-api",
-    "dockerized:test:int": "yarn dockerized:test-api yarn test:int",
-    "dockerized:test:int:watch": "yarn dockerized:test-api yarn test:int --watchAll",
-    "dockerized:test:int:cov": "yarn dockerized:test-api yarn test:int --coverage"
+    "d:test-api": "docker-compose -f docker-compose.test.yml run --rm test-api",
+    "d:test:int": "yarn d:test-api yarn test:int",
+    "d:test:int:watch": "yarn d:test-api yarn test:int --watchAll",
+    "d:test:int:cov": "yarn d:test-api yarn test:int --coverage"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
