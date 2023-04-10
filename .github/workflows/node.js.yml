@@ -25,4 +25,4 @@ jobs:
     - name: Linting
       run: yarn lint
     - name: Run integration tests
-      run: yarn dockerized:test:int
+      run: yarn d:test:int
