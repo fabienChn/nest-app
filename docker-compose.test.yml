@@ -4,12 +4,13 @@ services:
     build:
       context: .
       target: development
+      args:
+        NODE_ENV: test
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     env_file:
       - .env.test
-    # command: yarn run prisma:test:deploy
     networks:
       - test-app
     depends_on:

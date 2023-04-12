@@ -6,12 +6,13 @@ services:
     build:
       context: .
       target: development
+      args:
+        NODE_ENV: development
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
-      - ${SERVER_PORT}:${SERVER_PORT}
-    command: ./startup-script.sh
+      - 4000:4000
     env_file:
       - .env
     networks:
