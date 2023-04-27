@@ -19,6 +19,8 @@ services:
       - dev-app
     depends_on:
       - dev-db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   dev-db:
     image: postgres:13
     ports:
