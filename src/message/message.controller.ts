@@ -48,14 +48,9 @@ export class MessageController {
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
   editMessage(
-    @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) messageId: number,
     @Body() dto: EditMessageDto,
   ) {
-    return this.messageService.editMessage(
-      userId,
-      messageId,
-      dto,
-    );
+    return this.messageService.editMessage(messageId, dto);
   }
 }

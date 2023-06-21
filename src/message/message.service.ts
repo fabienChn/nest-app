@@ -55,7 +55,6 @@ export class MessageService {
   }
 
   editMessage(
-    userId: number,
     messageId: number,
     dto: EditMessageDto,
   ): Promise<Message> {
@@ -64,7 +63,6 @@ export class MessageService {
         id: messageId,
       },
       data: {
-        user_id: userId,
         text: dto.text,
         is_liked: dto.isLiked,
       },
