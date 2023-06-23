@@ -3,6 +3,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
@@ -27,5 +28,17 @@ export class UserController {
   @Get('')
   getUsers(@GetUser('id') userId: number) {
     return this.userService.getUsers(userId);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('/new-conversation')
+  getUsersForNewConversation(
+    @GetUser('id') userId: number,
+    @Query('name') name: string,
+  ) {
+    return this.userService.getUsersForNewConversation(
+      userId,
+      name,
+    );
   }
 }

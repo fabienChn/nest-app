@@ -8,6 +8,7 @@
   "scripts": {
     "db:dev:seed": "yarn prisma db seed",
     "prisma:migrate": "prisma migrate dev",
+    "prisma:migrate:reset": "prisma migrate reset --preview-feature",
     "prisma:dev:studio": "prisma studio",
     "prisma:dev:deploy": "prisma migrate deploy",
     "prisma:test:studio": "dotenv -e .env.test -- prisma studio",
