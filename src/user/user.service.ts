@@ -26,6 +26,7 @@ export class UserService {
     authId: number,
     name = '',
   ) {
+    console.log({ name });
     const query = Prisma.sql`
       SELECT users.*
       FROM users
@@ -42,10 +43,12 @@ export class UserService {
         )
         GROUP BY u.id
       )
-      AND lower(name) LIKE ${`%${name.toLowerCase()}%`}
+      AND lower(users.name) LIKE ${`%${name.toLowerCase()}%`}
       ORDER BY name
     `;
 
-    return await this.prisma.$queryRaw(query);
+    const result = await this.prisma.$queryRaw(query);
+    console.log(result);
+    return result;
   }
 }
