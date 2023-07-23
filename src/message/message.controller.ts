@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { GetUser } from 'src/auth/decorator';
@@ -29,10 +30,12 @@ export class MessageController {
     @GetUser('id') userId: number,
     @Param('conversationId', ParseIntPipe)
     conversationId: number,
+    @Query('page') page: number,
   ) {
     return this.messageService.getMessages(
       conversationId,
       userId,
+      page,
     );
   }
 

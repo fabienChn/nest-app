@@ -34,5 +34,13 @@ Nest is [MIT licensed](LICENSE).
 
 
 
-### Commnands
+## Commnands
+
+```
 netstat -tuln | grep 4000
+```
+
+run a command inside the running container:
+```
+docker exec -it CONTAINER_ID COMMAND
+```

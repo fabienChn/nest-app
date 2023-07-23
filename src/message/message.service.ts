@@ -10,11 +10,14 @@ import {
 export class MessageService {
   constructor(private prisma: PrismaService) {}
 
-  getMessages(
+  async getMessages(
     conversationId: number,
     userId: number,
+    page = 1,
   ): Promise<Message[]> {
-    return this.prisma.message.findMany({
+    const itemsPerPage = 10;
+
+    const messages = await this.prisma.message.findMany({
       where: {
         conversation: {
           id: conversationId,
@@ -28,9 +31,13 @@ export class MessageService {
         },
       },
       orderBy: {
-        created_at: 'asc',
+        created_at: 'desc',
       },
+      skip: (page - 1) * itemsPerPage,
+      take: itemsPerPage,
     });
+
+    return messages.reverse();
   }
 
   createMessage(
